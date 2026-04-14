@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyHair – Your Hair, Your Way</title>
+  <meta name="description" content="实时 AI 发型编辑器：扫描你的头发，模拟任意发型，实时预览长度、卷度和颜色。" />
+  <meta property="og:title" content="MyHair – Your Hair, Your Way" />
+  <meta property="og:description" content="基于 GaussianHair 学术研究的实时发型编辑器" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💇</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ===== ANALYSIS OVERLAY ===== -->
+<div class="analysis-overlay" id="analysis-overlay">
+  <div class="analysis-spinner"></div>
+  <h3 style="font-size:20px;font-weight:800;">AI 发型分析中…</h3>
+  <div class="analysis-steps">
+    <div class="analysis-step" id="step-detect">
+      <span class="step-indicator">🔍</span>
+      <span>检测人脸与发际线</span>
+    </div>
+    <div class="analysis-step" id="step-color">
+      <span class="step-indicator">🎨</span>
+      <span>分析发色与光泽</span>
+    </div>
+    <div class="analysis-step" id="step-texture">
+      <span class="step-indicator">〰️</span>
+      <span>识别发质与卷曲度</span>
+    </div>
+    <div class="analysis-step" id="step-model">
+      <span class="step-indicator">✨</span>
+      <span>生成 3D 发型模型</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="main-nav">
+  <div class="nav-logo" onclick="showPage('landing')">
+    <div class="logo-icon">💇</div>
+    <span class="gradient-text">MyHair</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-ghost btn-sm" onclick="showPage('scan')">开始扫描</button>
+    <a class="btn btn-ghost btn-sm" href="https://github.com/eth-ait/GaussianHaircut" target="_blank" rel="noopener">技术来源</a>
+  </div>
+</nav>
+
+<!-- ===================================================
+     LANDING PAGE
+===================================================== -->
+<section class="page active" id="page-landing">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">
+      ✨ 基于 GaussianHair · Neural Haircut 学术研究
+    </div>
+    <h1>
+      <span class="gradient-text">Your Hair,</span><br>
+      <span class="gradient-text">Your Way.</span>
+    </h1>
+    <p>
+      拍一张照片，AI 立即识别你的发型。<br>
+      实时调整长度、卷度、颜色，找到最适合自己的造型。
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" id="btn-start-scan">
+        📸 开始扫描
+      </button>
+      <button class="btn btn-secondary btn-lg" id="btn-demo">
+        🎨 看演示效果
+      </button>
+    </div>
+    <!-- Stats -->
+    <div style="display:flex;gap:40px;margin-top:16px;flex-wrap:wrap;justify-content:center;">
+      <div style="text-align:center;">
+        <div class="gold-text" style="font-size:28px;font-weight:900;">39%</div>
+        <div style="font-size:13px;color:var(--muted);">消费者对发型不满意</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="gradient-text" style="font-size:28px;font-weight:900;">88%</div>
+        <div style="font-size:13px;color:var(--muted);">愿意为技术服务付费</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="gold-text" style="font-size:28px;font-weight:900;">8+</div>
+        <div style="font-size:13px;color:var(--muted);">发型预设可选</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-section">
+    <h2>只需 <span class="gradient-text">4 步</span>，找到理想发型</h2>
+    <div class="steps-grid">
+      <div class="card step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon">📸</div>
+        <h3>扫描 & 生成</h3>
+        <p>拍一张照片或打开摄像头，AI 自动采集你当前的发量、发色、发长数据</p>
+      </div>
+      <div class="card step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon">🤖</div>
+        <h3>AI 分析</h3>
+        <p>基于 Neural Haircut & GaussianHair 算法，生成可编辑的发型覆盖层</p>
+      </div>
+      <div class="card step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon">🎨</div>
+        <h3>实时编辑</h3>
+        <p>滑块调节长度、卷度、颜色、刘海和发量，效果即时渲染</p>
+      </div>
+      <div class="card step-card">
+        <div class="step-num">4</div>
+        <div class="step-icon">💾</div>
+        <h3>保存 & 分享</h3>
+        <p>一键保存发型预览图，带去理发店精准沟通，告别沟通失误</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features-section">
+    <div class="features-inner">
+      <h2>为什么选择 <span class="gradient-text">MyHair</span></h2>
+      <div class="features-grid">
+        <div class="card feature-item">
+          <div class="feature-icon">⚡</div>
+          <div>
+            <h4>实时渲染</h4>
+            <p>基于 Canvas 2D API，每次参数调整即时看到效果，无需等待</p>
+          </div>
+        </div>
+        <div class="card feature-item">
+          <div class="feature-icon">🎨</div>
+          <div>
+            <h4>10 种颜色</h4>
+            <p>从自然黑到酒红、紫调，涵盖主流发色，支持发根到发梢渐变</p>
+          </div>
+        </div>
+        <div class="card feature-item">
+          <div class="feature-icon">📱</div>
+          <div>
+            <h4>摄像头直连</h4>
+            <p>无需下载 App，浏览器直接调用前置摄像头，隐私数据不上传服务器</p>
+          </div>
+        </div>
+        <div class="card feature-item">
+          <div class="feature-icon">💇</div>
+          <div>
+            <h4>8 种发型预设</h4>
+            <p>Bob、长直发、卷发、丸子头、马尾等经典造型，一键切换对比</p>
+          </div>
+        </div>
+        <div class="card feature-item">
+          <div class="feature-icon">🔬</div>
+          <div>
+            <h4>学术研究驱动</h4>
+            <p>参考 ETH Zurich GaussianHaircut、Neural Haircut、HAAR 等顶会论文</p>
+          </div>
+        </div>
+        <div class="card feature-item">
+          <div class="feature-icon">🔓</div>
+          <div>
+            <h4>开源免费</h4>
+            <p>完全开源，MIT 协议，欢迎贡献代码或自行部署</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech references -->
+  <div style="padding:40px 24px;text-align:center;max-width:700px;margin:0 auto;">
+    <h3 style="margin-bottom:16px;color:var(--muted);font-size:14px;text-transform:uppercase;letter-spacing:1px;">学术技术基础</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+      <a href="https://github.com/eth-ait/GaussianHaircut" target="_blank" class="btn btn-secondary btn-sm">📄 GaussianHaircut (ETH AIT)</a>
+      <a href="https://arxiv.org/abs/2306.05872" target="_blank" class="btn btn-secondary btn-sm">📄 Neural Haircut</a>
+      <a href="https://arxiv.org/abs/2402.10483" target="_blank" class="btn btn-secondary btn-sm">📄 GaussianHair</a>
+      <a href="https://arxiv.org/abs/2312.11666" target="_blank" class="btn btn-secondary btn-sm">📄 HAAR</a>
+    </div>
+  </div>
+
+  <footer style="padding:24px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--border);">
+    MyHair · Team Eayment (Wendy Wu, Dawn Deng, Kising Zhang) ·
+    <a href="https://github.com" style="color:var(--purple);text-decoration:none;">GitHub</a>
+  </footer>
+</section>
+
+<!-- ===================================================
+     SCAN PAGE
+===================================================== -->
+<section class="page" id="page-scan">
+  <div class="scan-container">
+    <div>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('landing')" style="margin-bottom:16px;">← 返回</button>
+      <h2>📸 扫描你的头发</h2>
+      <p class="subtitle" style="margin-top:8px;">用摄像头拍照或上传图片，AI 自动分析你的发型</p>
+    </div>
+
+    <!-- Camera area -->
+    <div class="camera-area card">
+      <video id="camera-video" style="display:none;" playsinline muted autoplay></video>
+      <div id="camera-placeholder">
+        <div class="cam-icon">📷</div>
+        <p>点击下方按钮开启摄像头</p>
+        <p style="font-size:12px;opacity:0.6;">或使用图片上传</p>
+      </div>
+      <!-- Overlay elements -->
+      <div class="scan-overlay">
+        <div class="scan-line"></div>
+        <div class="scan-corners">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="scan-actions">
+      <button class="btn btn-primary" id="btn-start-camera">
+        📷 开启摄像头
+      </button>
+      <button class="btn btn-secondary" id="btn-use-photo">
+        🖼️ 上传图片
+      </button>
+      <input type="file" id="upload-input" accept="image/*" style="display:none;" />
+    </div>
+
+    <!-- Upload zone -->
+    <div class="upload-zone card" id="upload-zone">
+      <div class="upload-icon">📁</div>
+      <p>拖拽图片到这里，或 <span>点击上传</span></p>
+      <p style="font-size:12px;margin-top:6px;opacity:0.5;">支持 JPG、PNG、WebP</p>
+    </div>
+
+    <!-- Demo shortcut -->
+    <div style="text-align:center;">
+      <button class="btn btn-ghost btn-sm" onclick="loadDemoImage()">
+        ✨ 使用演示头像直接体验
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================
+     EDITOR PAGE
+===================================================== -->
+<section class="page" id="page-editor">
+  <div class="editor-layout">
+
+    <!-- Preview area -->
+    <div class="preview-area">
+      <img id="preview-base" src="" alt="Your photo" />
+      <canvas id="hair-canvas"></canvas>
+
+      <!-- Preview overlay controls -->
+      <div class="preview-controls">
+        <button class="btn btn-secondary btn-sm" onclick="showPage('scan')" title="重新扫描">🔄 重拍</button>
+      </div>
+
+      <!-- Grid overlay toggle hint -->
+      <div style="position:absolute;bottom:16px;left:16px;font-size:12px;color:rgba(255,255,255,0.4);">
+        实时预览 · 发型叠加在照片上
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="editor-sidebar">
+
+      <!-- Analysis results -->
+      <div class="sidebar-section">
+        <h3>🔍 检测结果</h3>
+        <div class="analysis-results">
+          <div class="result-tag">
+            <span class="label">发量</span>
+            <span class="value" id="result-volume">中等</span>
+          </div>
+          <div class="result-tag">
+            <span class="label">发色</span>
+            <span class="value" id="result-color">自然黑</span>
+          </div>
+          <div class="result-tag">
+            <span class="label">长度</span>
+            <span class="value" id="result-length">中长发</span>
+          </div>
+          <div class="result-tag">
+            <span class="label">发质</span>
+            <span class="value" id="result-texture">直发</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="sidebar-section">
+        <h3>💇 发型预设</h3>
+        <div class="presets-grid" id="presets-grid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+      <!-- Sliders -->
+      <div class="sidebar-section">
+        <h3>🎛️ 精细调节</h3>
+        <div class="slider-group">
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span class="slider-name">📏 长度</span>
+              <span class="slider-value" id="slider-length-val">60%</span>
+            </div>
+            <input type="range" id="slider-length" min="5" max="100" step="1" value="60" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span class="slider-name">🌀 卷度</span>
+              <span class="slider-value" id="slider-curl-val">20%</span>
+            </div>
+            <input type="range" id="slider-curl" min="0" max="100" step="1" value="20" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span class="slider-name">🪄 发量</span>
+              <span class="slider-value" id="slider-volume-val">50%</span>
+            </div>
+            <input type="range" id="slider-volume" min="10" max="100" step="1" value="50" />
+          </div>
+
+          <div class="slider-item">
+            <div class="slider-label">
+              <span class="slider-name">💫 刘海</span>
+              <span class="slider-value" id="slider-bangs-val">30%</span>
+            </div>
+            <input type="range" id="slider-bangs" min="0" max="100" step="1" value="30" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Color picker -->
+      <div class="sidebar-section">
+        <h3>🎨 发色</h3>
+        <div class="color-grid" id="color-grid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+    </div><!-- /sidebar -->
+
+    <!-- Bottom bar -->
+    <div class="editor-bottom">
+      <div style="font-size:13px;color:var(--muted);">
+        💡 提示：拖动滑块实时调节，点击预设一键切换
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" id="btn-download">⬇️ 下载</button>
+        <button class="btn btn-primary" id="btn-share">✨ 查看结果</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================================================
+     RESULT PAGE
+===================================================== -->
+<section class="page" id="page-result">
+  <div class="result-container">
+    <button class="btn btn-ghost btn-sm" onclick="showPage('editor')" style="align-self:flex-start;">← 返回编辑</button>
+
+    <h2>🎉 你的<span class="gradient-text">理想发型</span></h2>
+    <p style="color:var(--muted);font-size:14px;">保存图片，带去理发店，精准传达你的想法</p>
+
+    <div class="result-preview card">
+      <img id="result-img" src="" alt="Result" style="width:100%;display:block;" />
+    </div>
+
+    <div class="card style-card">
+      <h4 class="gradient-text" id="result-style-name">长直发</h4>
+      <p id="result-style-desc">你的专属发型搭配</p>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary btn-lg" id="btn-download-result">⬇️ 保存图片</button>
+      <button class="btn btn-secondary" id="btn-edit-again">✏️ 继续编辑</button>
+      <button class="btn btn-secondary" id="btn-new-scan">📸 重新扫描</button>
+    </div>
+
+    <!-- Share tip -->
+    <div class="card" style="padding:20px;width:100%;font-size:13px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--text);display:block;margin-bottom:6px;">💡 如何使用这张图？</strong>
+      下载后发给你的理发师，或打印出来带去沙龙。
+      MyHair 帮你消除沟通误差，让"我要剪短一点"变成看得见的精确要求。
+    </div>
+  </div>
+</section>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="js/presets.js"></script>
+<script src="js/hair-renderer.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
